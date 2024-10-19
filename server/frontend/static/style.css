@@ -17,14 +17,46 @@ img{
   display: flex;  
   flex: 1;
   flex-direction: row;
-  margin: auto;
   margin-top: 1%;
   justify-content: center;
-  padding:20px;
+  padding:0px;
+  gap: 0px;
+}
+
+.form-group {
+  width: 100%; /* or a specific width value */
+  max-width: 300px; /* adjust this value to your desired maximum width */
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group textarea {
+  width: 100%; /* or a specific width value */
+  max-width: 100%; /* adjust this value to your desired maximum width */
+}
+
+#contactForm {
+  position: absolute;
+  justify-content: left;
+  left: 20%
+}
+
+#companyInfo {
+  position: absolute;
+  justify-content: right;
+  left: 60%;
+
+}
+
+#contactUsImg {
+  height: 100px;
+  width: 100px;
 }
 
 .container{
   justify-content: center;
+  align-items: center;
+  height: 100vh;
 }
 .details{
   font-size: 20px;
@@ -123,4 +155,28 @@ img{
     border-radius:50px;
     text-align:center;
     box-shadow: 2px 2px 3px #999;  
+}
+
+#person1,
+#person2,
+#person3 {
+  width: 350px;
+  height: 400px
+}
+
+#contactUs {
+  color: black; 
+  text-align: center; 
+  padding-top: 200px;
+}
+
+#companyInfo {
+  justify-content: right;
+}
+
+.banner-img {
+  background-image: url('/static/banner.jpg');
+  height: 200px;
+  width: 70%;
+  margin-left: 15%;
 }
