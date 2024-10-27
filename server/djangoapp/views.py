@@ -16,13 +16,10 @@ from .populate import initiate
 from .models import CarMake, CarModel
 from .restapis import get_request, analyze_review_sentiments, post_review
 
-
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
 
-
 # Create your views here.
-
 def get_cars(request):
     count = CarMake.objects.filter().count()
     print(count)
@@ -56,13 +53,10 @@ def logout_request(request):
     data = {"userName":""}
     return JsonResponse(data)
 
-
-
 # Create a `registration` view to handle sign up request
 @csrf_exempt
 def registration(request):
     context = {}
-
     data = json.loads(request.body)
     username = data["userName"]
     password = data["password"]
@@ -97,11 +91,6 @@ def registration(request):
             data = {"status": "failed", "message": "Error creating user", "userName": username}
             return JsonResponse(data)
 
-
-
-
-# # Update the `get_dealerships` view to render the index page with
-# a list of dealerships
 def get_dealerships(request, state="All"):
     if(state == "All"):
         endpoint = "/fetchDealers"
@@ -112,16 +101,23 @@ def get_dealerships(request, state="All"):
 
 # Create a `get_dealer_reviews` view to render the reviews of a dealer
 def get_dealer_reviews(request, dealer_id):
-    if(dealer_id):
+    if not dealer_id:
+        return JsonResponse({"status":400,"message":"Bad Request"})
+        
+    try:
         endpoint = "/fetchReviews/dealer/"+str(dealer_id)
         reviews = get_request(endpoint)
+        if not reviews:
+            return JsonResponse({"status": 404, "message": "No reviews found"})
+            
         for review_detail in reviews:
-            response = analyze_review_sentiments(review_detail['review'])
-            print(response)
-            review_detail['sentiment'] = response['sentiment']
+            sentiment_result = analyze_review_sentiments(review_detail['review'])
+            review_detail['sentiment'] = sentiment_result.get('sentiment', 'neutral')
+            
         return JsonResponse({"status":200,"reviews":reviews})
-    else:
-        return JsonResponse({"status":400,"message":"Bad Request"})
+    except Exception as e:
+        logger.error(f"Error in get_dealer_reviews: {str(e)}")
+        return JsonResponse({"status":500,"message":"Internal Server Error"})
 
 # Create a `get_dealer_details` view to render the dealer details
 def get_dealer_details(request, dealer_id):
@@ -133,7 +129,6 @@ def get_dealer_details(request, dealer_id):
         return JsonResponse({"status":400,"message":"Bad Request"})
 
 # Create a `add_review` view to submit a review
-
 def add_review(request):
     if(request.user.is_anonymous == False):
         data = json.loads(request.body)
